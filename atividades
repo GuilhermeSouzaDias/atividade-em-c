@@ -311,3 +311,214 @@ void imprimir_reverso(No* inicio) {
                     liberar_lista(lista);
                     return 0;
                 }
+
+
+//exercicio 9
+
+int pilha[TAMANHO_MAX];
+int topo_pilha = -1;
+
+int esta_vazia() {
+    return topo_pilha == -1;
+}
+
+void push(int valor) {
+    if (topo_pilha == TAMANHO_MAX - 1) {
+        printf("Erro: Pilha cheia!\n");
+        return;
+    }
+    topo_pilha++;
+    pilha[topo_pilha] = valor;
+}
+
+void pop() {
+    if (esta_vazia()) {
+        printf("Erro: Pilha vazia!\n");
+        return;
+    }
+    topo_pilha--;
+}
+
+int topo() {
+    if (esta_vazia()) {
+        printf("Erro: Pilha vazia!\n");
+        exit(1); 
+    }
+    return pilha[topo_pilha];
+}
+        //main exercicio 9
+            int main() {
+            push(10);
+            push(20);
+            push(30);
+        
+            printf("Topo da pilha: %d\n", topo()); // Esperado: 30
+        
+            pop();
+            printf("Topo após pop: %d\n", topo()); // Esperado: 20
+        
+            while (!esta_vazia()) {
+                printf("Removendo: %d\n", topo());
+                pop();
+            }
+        
+            pop(); // Tentativa de remover de pilha vazia
+        
+            return 0;
+            }
+        
+
+
+
+//exercicio 10
+typedef struct No {
+    int valor;
+    struct No* proximo;
+} No;
+
+
+typedef struct {
+    No* topo;
+} Pilha;
+
+
+Pilha* criar_pilha() {
+    Pilha* pilha = (Pilha*)malloc(sizeof(Pilha));
+    pilha->topo = NULL;
+    return pilha;
+}
+
+int esta_vazia(Pilha* pilha) {
+    return pilha->topo == NULL;
+}
+
+void push(Pilha* pilha, int valor) {
+    No* novo = (No*)malloc(sizeof(No));
+    if (!novo) {
+        printf("Erro de alocação de memória.\n");
+        exit(1);
+    }
+    novo->valor = valor;
+    novo->proximo = pilha->topo;
+    pilha->topo = novo;
+}
+
+void pop(Pilha* pilha) {
+    if (esta_vazia(pilha)) {
+        printf("Erro: pilha vazia!\n");
+        return;
+    }
+    No* temp = pilha->topo;
+    pilha->topo = pilha->topo->proximo;
+    free(temp);
+}
+
+int topo(Pilha* pilha) {
+    if (esta_vazia(pilha)) {
+        printf("Erro: pilha vazia!\n");
+        exit(1); 
+    }
+    return pilha->topo->valor;
+}
+
+void liberar_pilha(Pilha* pilha) {
+    while (!esta_vazia(pilha)) {
+        pop(pilha);
+    }
+    free(pilha);
+}
+        //main exercicio 10
+            int main() {
+            Pilha* pilha = criar_pilha();
+        
+            push(pilha, 10);
+            push(pilha, 20);
+            push(pilha, 30);
+        
+            printf("Topo: %d\n", topo(pilha)); // Esperado: 30
+        
+            pop(pilha);
+            printf("Topo após pop: %d\n", topo(pilha)); // Esperado: 20
+        
+            while (!esta_vazia(pilha)) {
+                printf("Removendo: %d\n", topo(pilha));
+                pop(pilha);
+            }
+        
+            pop(pilha); // Tentativa de remover de pilha vazia
+        
+            liberar_pilha(pilha);
+            return 0;
+            }
+
+
+
+//exercicio 11
+int verificar_balanceamento(const char* str) {
+    char pilha[MAX];
+    int topo = -1;
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        char c = str[i];
+
+        if (c == '(' || c == '[' || c == '{') {
+            if (topo == MAX - 1) {
+                printf("Erro: pilha cheia.\n");
+                return 0;
+            }
+            pilha[++topo] = c;
+        }
+      
+        else if (c == ')' || c == ']' || c == '}') {
+            if (topo == -1 || !corresponde(pilha[topo], c)) {
+                return 0; // Desbalanceado
+            }
+            topo--; // Remove o topo
+        }
+    }
+
+    return topo == -1;
+}
+            //main exercicio 11
+                int main() {
+                const char* teste1 = "({[]})";
+                const char* teste2 = "({[})";
+                const char* teste3 = "(()[]{}{[]})";
+            
+                printf("Teste 1: %s -> %s\n", teste1, verificar_balanceamento(teste1) ? "Válido" : "Inválido");
+                printf("Teste 2: %s -> %s\n", teste2, verificar_balanceamento(teste2) ? "Válido" : "Inválido");
+                printf("Teste 3: %s -> %s\n", teste3, verificar_balanceamento(teste3) ? "Válido" : "Inválido");
+            
+                return 0;
+                }
+
+
+
+//exercicio 12
+void inverter_string(char* str) {
+    char pilha[MAX];
+    int topo = -1;
+    int i;
+
+    for (i = 0; str[i] != '\0'; i++) {
+        pilha[++topo] = str[i];
+    }
+
+    for (i = 0; topo >= 0; i++) {
+        str[i] = pilha[topo--];
+    }
+    str[i] = '\0';
+}
+                    //main exercicio 12
+                        int main() {
+                        char palavra[MAX];
+                    
+                        printf("Digite uma string: ");
+                        scanf("%s", palavra);
+                    
+                        inverter_string(palavra);
+                    
+                        printf("String invertida: %s\n", palavra);
+                    
+                        return 0;
+                        }
