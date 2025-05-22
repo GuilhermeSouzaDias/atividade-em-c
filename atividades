@@ -46,29 +46,42 @@ int contar_nos(No* inicio) {
     return contador;
 }
 
+        //main exercicio 2
+            int main() {
+            No* lista = NULL;
+        
+            inserir_fim(&lista, 1);
+            inserir_fim(&lista, 2);
+            inserir_fim(&lista, 3);
+            inserir_fim(&lista, 4);
+        
+            printf("Número de nós na lista: %d\n", contar_nos(lista));
+        
+            liberar_lista(lista);
+            return 0;
+            }
+
+
 
 //exercicio 3
 int buscar_elemento(No* inicio, int valor_buscado) {
     No* atual = inicio;
     while (atual != NULL) {
         if (atual->valor == valor_buscado) {
-            return 1; // Valor encontrado
+            return 1; 
         }
         atual = atual->proximo;
     }
-    return 0; // Valor não encontrado
+    return 0; 
 }
-
         //main exercicio3
             int main() {
-               
                 No* n1 = criar_no(10);
                 No* n2 = criar_no(20);
                 No* n3 = criar_no(30);
                 n1->proximo = n2;
                 n2->proximo = n3;
             
-             
                 printf("Buscar 20: %d\n", buscar_elemento(n1, 20)); // Saída: 1
                 printf("Buscar 40: %d\n", buscar_elemento(n1, 40)); // Saída: 0
             
@@ -78,9 +91,10 @@ int buscar_elemento(No* inicio, int valor_buscado) {
             
                 return 0;
             }
-            
-//exercicio 4 
 
+
+
+//exercicio 4 
 void inserir_posicao(No** inicio, int valor, int posicao) {
     if (posicao < 0) {
         printf("Posição inválida.\n");
@@ -89,13 +103,11 @@ void inserir_posicao(No** inicio, int valor, int posicao) {
 
     No* novo = criar_no(valor);
 
-    
     if (posicao == 0) {
         novo->proximo = *inicio;
         *inicio = novo;
         return;
     }
-
    
     No* atual = *inicio;
     int i = 0;
@@ -113,19 +125,189 @@ void inserir_posicao(No** inicio, int valor, int posicao) {
     novo->proximo = atual->proximo;
     atual->proximo = novo;
 }
-
-
         //main exercicio 4
             int main() {
             No* lista = NULL;
         
             // Lista inicial: vazia
-            inserir_posicao(&lista, 10, 0); // Lista: 10
-            inserir_posicao(&lista, 20, 1); // Lista: 10 -> 20
-            inserir_posicao(&lista, 30, 1); // Lista: 10 -> 30 -> 20
-            inserir_posicao(&lista, 5, 0);  // Lista: 5 -> 10 -> 30 -> 20
+            inserir_posicao(&lista, 10, 0); 
+            inserir_posicao(&lista, 20, 1); 
+            inserir_posicao(&lista, 30, 1);
+            inserir_posicao(&lista, 5, 0);  
         
-            imprimir_lista(lista); // Saída esperada: 5 -> 10 -> 30 -> 20 -> NULL
+            imprimir_lista(lista); 
         
             liberar_lista(lista);
             return 0;
+
+            }
+
+
+
+//exercicio 5
+void remover_valor(No** inicio, int valor) {
+    No* atual = *inicio;
+    No* anterior = NULL;
+
+    while (atual != NULL) {
+        if (atual->valor == valor) {
+            if (anterior == NULL) {
+                // Remover o primeiro nó
+                *inicio = atual->proximo;
+            } else {
+                // Remover nó do meio ou fim
+                anterior->proximo = atual->proximo;
+            }
+            free(atual);
+            printf("Valor %d removido.\n", valor);
+            return;
+        }
+        anterior = atual;
+        atual = atual->proximo;
+    }
+
+    printf("Valor %d não encontrado.\n", valor);
+}
+                //main exercicio 5
+                    int main() {
+                No* lista = NULL;
+                inserir_fim(&lista, 10);
+                inserir_fim(&lista, 20);
+                inserir_fim(&lista, 30);
+                inserir_fim(&lista, 40);
+                inserir_fim(&lista, 20);
+            
+                printf("Lista original:\n");
+                imprimir_lista(lista); 
+            
+                remover_valor(&lista, 20); 
+            
+                printf("Lista após remover 20:\n");
+                imprimir_lista(lista);
+            
+                remover_valor(&lista, 99); // Tenta remover valor que não existe
+            
+                liberar_lista(lista);
+                return 0;
+                }
+
+
+
+//exercicio 6
+void inverter_lista(No** inicio) {
+    No* anterior = NULL;
+    No* atual = *inicio;
+    No* proximo = NULL;
+
+    while (atual != NULL) {
+        proximo = atual->proximo;  
+        atual->proximo = anterior; 
+        anterior = atual;          
+        atual = proximo;           
+    }
+
+    *inicio = anterior; 
+}
+        //main exercicio 6 
+                int main() {
+            No* lista = NULL;
+        
+            inserir_fim(&lista, 1);
+            inserir_fim(&lista, 2);
+            inserir_fim(&lista, 3);
+            inserir_fim(&lista, 4);
+            inserir_fim(&lista, 5);
+        
+            printf("Lista original:\n");
+            imprimir_lista(lista);  
+        
+            inverter_lista(&lista);
+        
+            printf("Lista invertida:\n");
+            imprimir_lista(lista);  
+        
+            liberar_lista(lista);
+            return 0;
+        }
+
+
+
+//exercicio 7
+No* encontrar_meio(No* inicio) {
+    if (inicio == NULL) return NULL;
+
+    No* lento = inicio;
+    No* rapido = inicio;
+
+    while (rapido != NULL && rapido->proximo != NULL) {
+        lento = lento->proximo;
+        rapido = rapido->proximo->proximo;
+    }
+
+    return lento; 
+}
+        //main exercicio 7
+            int main() {
+            No* lista = NULL;
+        
+            inserir_fim(&lista, 10);
+            inserir_fim(&lista, 20);
+            inserir_fim(&lista, 30);
+            inserir_fim(&lista, 40);
+            inserir_fim(&lista, 50);
+        
+            printf("Lista:\n");
+            imprimir_lista(lista);
+        
+            No* meio = encontrar_meio(lista);
+            if (meio != NULL)
+                printf("Nó do meio: %d\n", meio->valor); 
+        
+            liberar_lista(lista);
+            return 0;
+        }
+
+
+
+//exercicio 8
+void imprimir_reverso(No* inicio) {
+    //Contar o número de nós
+    int tamanho = 0;
+    No* atual = inicio;
+    while (atual != NULL) {
+        tamanho++;
+        atual = atual->proximo;
+    }
+
+    //Empilhar os valores
+    Pilha* pilha = criar_pilha(tamanho);
+    atual = inicio;
+    while (atual != NULL) {
+        empilhar(pilha, atual->valor);
+        atual = atual->proximo;
+    }
+
+    //Desempilhar os valores
+    printf("Lista em ordem reversa:\n");
+    while (!pilha_vazia(pilha)) {
+        printf("%d -> ", desempilhar(pilha));
+    }
+    printf("NULL\n");
+
+    liberar_pilha(pilha);
+}
+                //main exercicio 8
+                            int main() {
+                    No* lista = NULL;
+                
+                    inserir_fim(&lista, 10);
+                    inserir_fim(&lista, 20);
+                    inserir_fim(&lista, 30);
+                    inserir_fim(&lista, 40);
+                
+                    printf("Impressão reversa:\n");
+                    imprimir_reverso(lista);
+                
+                    liberar_lista(lista);
+                    return 0;
+                }
