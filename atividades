@@ -522,3 +522,201 @@ void inverter_string(char* str) {
                     
                         return 0;
                         }
+
+
+
+//exercicio 13
+int ehPalindromo(const char *str) {
+    Pilha pilha;
+    inicializaPilha(&pilha);
+
+    int len = strlen(str);
+
+                //main exercicio 13
+                    int main() {
+                        char str[MAX];
+                        printf("Digite uma string: ");
+                        fgets(str, MAX, stdin);
+                        str[strcspn(str, "\n")] = 0;  // Remove o caractere de nova linha da entrada
+                    
+                        if (ehPalindromo(str)) {
+                            printf("A string é um palíndromo.\n");
+                        } else {
+                            printf("A string não é um palíndromo.\n");
+                        }
+                    
+                        return 0;
+                    }
+
+
+//exercicio 14
+void empilhar(Pilha *p, int item) {
+    if (!pilhaCheia(p)) {
+        p->items[++(p->top)] = item;
+    }
+}
+
+int desempilhar(Pilha *p) {
+    if (!pilhaVazia(p)) {
+        return p->items[(p->top)--];
+    }
+    return -1;  // Caso a pilha esteja vazia
+}
+
+int topo(Pilha *p) {
+    if (!pilhaVazia(p)) {
+        return p->items[p->top];
+    }
+    return -1;  // Caso a pilha esteja vazia
+}
+
+void ordenarPilha(Pilha *pOriginal) {
+    Pilha pAuxiliar;
+    inicializaPilha(&pAuxiliar);
+
+    while (!pilhaVazia(pOriginal)) {
+        // Desempilha o elemento da pilha original
+        int temp = desempilhar(pOriginal);
+
+        while (!pilhaVazia(&pAuxiliar) && topo(&pAuxiliar) > temp) {
+            empilhar(pOriginal, desempilhar(&pAuxiliar));
+        }
+
+        empilhar(&pAuxiliar, temp);
+    }
+
+    while (!pilhaVazia(&pAuxiliar)) {
+        empilhar(pOriginal, desempilhar(&pAuxiliar));
+    }
+}
+void imprimirPilha(Pilha *p) {
+    if (pilhaVazia(p)) {
+        printf("A pilha está vazia.\n");
+        return;
+    }
+
+    printf("Pilha: ");
+    for (int i = 0; i <= p->top; i++) {
+        printf("%d ", p->items[i]);
+    }
+    printf("\n");
+}
+
+                //main exercicio 14
+                            int main() {
+                                Pilha p;
+                                inicializaPilha(&p);
+                            
+                                // Adicionando alguns elementos à pilha
+                                empilhar(&p, 5);
+                                empilhar(&p, 1);
+                                empilhar(&p, 8);
+                                empilhar(&p, 3);
+                                empilhar(&p, 7);
+                            
+                                printf("Pilha original:\n");
+                                imprimirPilha(&p);
+                            
+                                // Ordenando a pilha
+                                ordenarPilha(&p);
+                            
+                                printf("Pilha ordenada:\n");
+                                imprimirPilha(&p);
+                            
+                                return 0;
+                            }
+
+
+
+//exercicio 15
+
+#define MAX 100
+
+typedef struct {
+    int fila[MAX];
+    int frente;
+    int cauda;
+} Fila;
+
+void inicializaFila(Fila *f) {
+    f->frente = 0;
+    f->cauda = 0;
+}
+
+int filaVazia(Fila *f) {
+    return f->frente == f->cauda;
+}
+
+int filaCheia(Fila *f) {
+    return (f->cauda + 1) % MAX == f->frente;
+}
+
+void enfileirar(Fila *f, int item) {
+    if (filaCheia(f)) {
+        printf("Erro: Fila cheia!\n");
+    } else {
+        f->fila[f->cauda] = item;
+        f->cauda = (f->cauda + 1) % MAX;
+    }
+}
+
+int desenfileirar(Fila *f) {
+    if (filaVazia(f)) {
+        printf("Erro: Fila vazia!\n");
+        return -1;  
+    } else {
+        int item = f->fila[f->frente];
+        f->frente = (f->frente + 1) % MAX;  
+        return item;
+    }
+}
+
+int frente(Fila *f) {
+    if (filaVazia(f)) {
+        printf("Erro: Fila vazia!\n");
+        return -1;  // Retorna um valor inválido caso a fila esteja vazia
+    } else {
+        return f->fila[f->frente];
+    }
+}
+
+void imprimirFila(Fila *f) {
+    if (filaVazia(f)) {
+        printf("A fila está vazia.\n");
+        return;
+    }
+
+    printf("Fila: ");
+    int i = f->frente;
+    while (i != f->cauda) {
+        printf("%d ", f->fila[i]);
+        i = (i + 1) % MAX;
+    }
+    printf("\n");
+}
+
+                    //main exercicio 15
+                            int main() {
+                                Fila f;
+                                inicializaFila(&f);
+                            
+                                // Testando as operações de fila
+                                enfileirar(&f, 10);
+                                enfileirar(&f, 20);
+                                enfileirar(&f, 30);
+                                enfileirar(&f, 40);
+                            
+                                imprimirFila(&f);
+                            
+                                printf("Frente da fila: %d\n", frente(&f));
+                            
+                                printf("Desenfileirando: %d\n", desenfileirar(&f));
+                                imprimirFila(&f);
+                            
+                                enfileirar(&f, 50);
+                                enfileirar(&f, 60);
+                            
+                                imprimirFila(&f);
+                            
+                                return 0;
+                            }
