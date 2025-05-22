@@ -1,0 +1,79 @@
+//exercicio 1
+void inserir_inicio(No** inicio, int valor) {
+    No* novo = criar_no(valor);
+    novo->proximo = *inicio;
+    *inicio = novo;
+}
+
+void inserir_fim(No** inicio, int valor) {
+    No* novo = criar_no(valor);
+    if (*inicio == NULL) {
+        *inicio = novo;
+        return;
+    }
+    No* atual = *inicio;
+    while (atual->proximo != NULL) {
+        atual = atual->proximo;
+    }
+    atual->proximo = novo;
+}
+
+//exercicio 2
+
+int contar_nos(No* inicio) {
+    int contador = 0;
+    No* atual = inicio;
+    while (atual != NULL) {
+        contador++;
+        atual = atual->proximo;
+    }
+    return contador;
+}
+
+
+//exercicio 3
+int buscar_elemento(No* inicio, int valor_buscado) {
+    No* atual = inicio;
+    while (atual != NULL) {
+        if (atual->valor == valor_buscado) {
+            return 1; // Valor encontrado
+        }
+        atual = atual->proximo;
+    }
+    return 0; // Valor não encontrado
+}
+
+//exercicio 4 
+
+void inserir_posicao(No** inicio, int valor, int posicao) {
+    if (posicao < 0) {
+        printf("Posição inválida.\n");
+        return;
+    }
+
+    No* novo = criar_no(valor);
+
+    // Inserir na posição 0 (início)
+    if (posicao == 0) {
+        novo->proximo = *inicio;
+        *inicio = novo;
+        return;
+    }
+
+    // Percorrer até o nó anterior à posição desejada
+    No* atual = *inicio;
+    int i = 0;
+    while (atual != NULL && i < posicao - 1) {
+        atual = atual->proximo;
+        i++;
+    }
+
+    if (atual == NULL) {
+        printf("Posição fora dos limites da lista.\n");
+        free(novo);
+        return;
+    }
+
+    novo->proximo = atual->proximo;
+    atual->proximo = novo;
+}
