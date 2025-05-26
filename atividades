@@ -629,7 +629,6 @@ void imprimirPilha(Pilha *p) {
 
 
 //exercicio 15
-
 #define MAX 100
 
 typedef struct {
@@ -674,7 +673,7 @@ int desenfileirar(Fila *f) {
 int frente(Fila *f) {
     if (filaVazia(f)) {
         printf("Erro: Fila vazia!\n");
-        return -1;  // Retorna um valor inválido caso a fila esteja vazia
+        return -1;
     } else {
         return f->fila[f->frente];
     }
@@ -699,8 +698,7 @@ void imprimirFila(Fila *f) {
                             int main() {
                                 Fila f;
                                 inicializaFila(&f);
-                            
-                                // Testando as operações de fila
+
                                 enfileirar(&f, 10);
                                 enfileirar(&f, 20);
                                 enfileirar(&f, 30);
@@ -720,3 +718,237 @@ void imprimirFila(Fila *f) {
                             
                                 return 0;
                             }
+
+//exercicio 16
+Queue* createQueue() {
+    Queue* q = (Queue*)malloc(sizeof(Queue));
+    q->front = q->rear = NULL;
+    return q;
+}
+
+int isEmpty(Queue* q) {
+    return (q->front == NULL);
+}
+
+void enqueue(Queue* q, int value) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = value;
+    newNode->next = NULL;
+
+    if (q->rear == NULL) {
+        q->front = q->rear = newNode;
+    } else {
+        q->rear->next = newNode;
+        q->rear = newNode;
+    }
+}
+
+int dequeue(Queue* q) {
+    if (isEmpty(q)) {
+        printf("Fila vazia. Não é possível remover.\n");
+        return -1;
+    }
+
+    Node* temp = q->front;
+    int value = temp->data;
+
+    q->front = q->front->next;
+
+    if (q->front == NULL)
+        q->rear = NULL;
+
+    free(temp);
+    return value;
+}
+
+int peek(Queue* q) {
+    if (isEmpty(q)) {
+        printf("Fila vazia.\n");
+        return -1;
+    }
+    return q->front->data;
+}
+
+void freeQueue(Queue* q) {
+    while (!isEmpty(q)) {
+        dequeue(q);
+    }
+    free(q);
+}
+
+                //main exercicio 16
+                    int main() {
+                        Queue* q = createQueue();
+                    
+                        enqueue(q, 10);
+                        enqueue(q, 20);
+                        enqueue(q, 30);
+                    
+                        printf("Frente da fila: %d\n", peek(q));
+                    
+                        printf("Removido: %d\n", dequeue(q));
+                        printf("Frente após remoção: %d\n", peek(q));
+                    
+                        freeQueue(q);
+                        return 0;
+                    }
+
+//exercicio 17 
+void generateBinaryNumbers(int N) {
+    Queue* q = createQueue();
+    enqueue(q, "1");
+
+    for (int i = 0; i < N; i++) {
+        char* current = dequeue(q);
+        printf("%s\n", current);
+
+        int len = strlen(current);
+        char* left = (char*)malloc(len + 2);
+        char* right = (char*)malloc(len + 2);
+
+        strcpy(left, current);
+        strcat(left, "0");
+
+        strcpy(right, current);
+        strcat(right, "1");
+
+        enqueue(q, left);
+        enqueue(q, right);
+
+        free(current);
+        free(left);
+        free(right);
+    }
+
+    freeQueue(q);
+}
+                //main exercicio 17
+                    int main() {
+                        int N = 10;
+                        printf("Primeiros %d números binários:\n", N);
+                        generateBinaryNumbers(N);
+                        return 0;
+                    }
+
+//exericio 18
+void inverter_primeiros_k(Queue* q, int k) {
+    if (k <= 0 || isQueueEmpty(q)) return;
+
+    Stack* s = createStack();
+
+    for (int i = 0; i < k && !isQueueEmpty(q); i++) {
+        push(s, dequeue(q));
+    }
+
+    while (!isStackEmpty(s)) {
+        enqueue(q, pop(s));
+    }
+
+    int size = 0;
+    Node* temp = q->front;
+    while (temp) {
+        size++;
+        temp = temp->next;
+    }
+
+    int rest = size - k;
+    for (int i = 0; i < rest; i++) {
+        enqueue(q, dequeue(q));
+    }
+
+    free(s);
+}
+                    //main exercicio 18
+                        int main() {
+                            Queue* q = createQueue();
+
+                            for (int i = 1; i <= 7; i++) {
+                                enqueue(q, i);
+                            }
+                        
+                            printf("Fila original: ");
+                            printQueue(q);
+                        
+                            int k = 4;
+                            inverter_primeiros_k(q, k);
+                        
+                            printf("Fila após inverter os primeiros %d elementos: ", k);
+                            printQueue(q);
+                        
+                            return 0;
+                        }
+
+//exercicio 19
+int detectar_ciclo(Node* head) {
+    Node* slow = head;
+    Node* fast = head;
+
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+
+        if (slow == fast) return 1;
+    }
+
+    return 0;
+}
+                    //main exercicio 19
+                        int main() {
+                            Node* head = novoNo(1);
+                            head->next = novoNo(2);
+                            head->next->next = novoNo(3);
+                            head->next->next->next = novoNo(4);
+                            head->next->next->next->next = head->next; // Cria ciclo
+                        
+                            if (detectar_ciclo(head)) {
+                                printf("Ciclo detectado na lista.\n");
+                            } else {
+                                printf("Nenhum ciclo na lista.\n");
+                            }
+
+                            return 0;
+                        }
+
+//exercicio 20
+Node* unir_listas_ordenadas(Node* l1, Node* l2) {
+    // Lista dummy para facilitar
+    Node dummy;
+    dummy.next = NULL;
+    Node* tail = &dummy;
+
+    while (l1 != NULL && l2 != NULL) {
+        if (l1->data <= l2->data) {
+            tail->next = l1;
+            l1 = l1->next;
+        } else {
+            tail->next = l2;
+            l2 = l2->next;
+        }
+        tail = tail->next;
+    }
+                        //main exercicio 20
+                            int main() {
+                                Node* lista1 = NULL;
+                                Node* lista2 = NULL;
+      
+                                inserir_fim(&lista1, 1);
+                                inserir_fim(&lista1, 3);
+                                inserir_fim(&lista1, 5);
+                            
+                                inserir_fim(&lista2, 2);
+                                inserir_fim(&lista2, 4);
+                                inserir_fim(&lista2, 6);
+                            
+                                printf("Lista 1: ");
+                                imprimir_lista(lista1);
+                                printf("Lista 2: ");
+                                imprimir_lista(lista2);
+                            
+                                Node* unida = unir_listas_ordenadas(lista1, lista2);
+                            
+                                printf("Lista unida: ");
+                                imprimir_lista(unida);
+                            
+                                return 0;
+                            }
+        
