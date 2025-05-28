@@ -34,6 +34,8 @@ void inserir_fim(No** inicio, int valor) {
                     return 0;
                 }
 
+
+
 //exercicio 2
 
 int contar_nos(No* inicio) {
@@ -952,3 +954,195 @@ Node* unir_listas_ordenadas(Node* l1, Node* l2) {
                                 return 0;
                             }
         
+
+//exercicio 21 
+void remover_todas_ocorrencias(No** head, int valor) {
+    No* atual = *head;
+    No* anterior = NULL;
+
+    while (atual != NULL) {
+        if (atual->valor == valor) {
+            No* temp = atual;
+            if (anterior == NULL) {
+                // Removendo o primeiro nó
+                *head = atual->prox;
+            } else {
+                anterior->prox = atual->prox;
+            }
+            atual = atual->prox;
+            free(temp);
+        } else {
+            anterior = atual;
+            atual = atual->prox;
+        }
+    }
+}
+
+        //main exercicio 21
+            int main() {
+                No* lista = NULL;
+            
+                inserir_inicio(&lista, 3);
+                inserir_inicio(&lista, 5);
+                inserir_inicio(&lista, 3);
+                inserir_inicio(&lista, 7);
+                inserir_inicio(&lista, 3);
+            
+                printf("Lista original:\n");
+                imprimir_lista(lista);
+            
+                remover_todas_ocorrencias(&lista, 3);
+            
+                printf("Lista após remover todas as ocorrências de 3:\n");
+                imprimir_lista(lista);
+            
+                return 0;
+            }
+
+//exercicio 22 
+No* encontrar_intersecao(No* head1, No* head2) {
+    int len1 = contar_nos(head1);
+    int len2 = contar_nos(head2);
+
+    int diff = abs(len1 - len2);
+
+    if (len1 > len2) {
+        for (int i = 0; i < diff; i++) {
+            head1 = head1->prox;
+        }
+    } else {
+        for (int i = 0; i < diff; i++) {
+            head2 = head2->prox;
+        }
+    }
+
+                //main exercicio 22
+                    int main() {
+    
+                        No* lista1 = novo_no(1);
+                        lista1->prox = novo_no(2);
+                        lista1->prox->prox = novo_no(3);
+                    
+                      
+                        No* lista2 = novo_no(9);
+                        lista2->prox = novo_no(8);
+                        lista2->prox->prox = lista1->prox->prox;  
+                    
+                        printf("Lista 1: ");
+                        imprimir_lista(lista1);
+                    
+                        printf("Lista 2: ");
+                        imprimir_lista(lista2);
+                    
+                        No* intersecao = encontrar_intersecao(lista1, lista2);
+                        if (intersecao) {
+                            printf("Interseção encontrada no nó com valor: %d\n", intersecao->valor);
+                        } else {
+                            printf("Nenhuma interseção encontrada.\n");
+                        }
+                    
+                        return 0;
+                    }
+
+
+//exercicio 23
+void rotacionar_lista(No** head_ref, int k) {
+    if (*head_ref == NULL || k == 0) return;
+
+    // Passo 1: contar o tamanho da lista
+    No* temp = *head_ref;
+    int tamanho = 1;
+    while (temp->prox != NULL) {
+        temp = temp->prox;
+        tamanho++;
+    }
+
+    // Fazer k rotação efetiva
+    k = k % tamanho;
+    if (k == 0) return;
+
+    // Passo 2: tornar a lista circular
+    temp->prox = *head_ref;
+
+    // Passo 3: encontrar o novo final da lista (tamanho - k) e o novo início
+    int passos = tamanho - k;
+    No* novo_fim = *head_ref;
+    for (int i = 1; i < passos; i++) {
+        novo_fim = novo_fim->prox;
+    }
+
+    // Passo 4: quebrar o círculo e atualizar o head
+    *head_ref = novo_fim->prox;
+    novo_fim->prox = NULL;
+}
+                            //main exercicio 23
+                                int main() {
+                                    No* lista = NULL;
+                                
+                                    inserir_fim(&lista, 1);
+                                    inserir_fim(&lista, 2);
+                                    inserir_fim(&lista, 3);
+                                    inserir_fim(&lista, 4);
+                                    inserir_fim(&lista, 5);
+                                
+                                    printf("Lista original:\n");
+                                    imprimir_lista(lista);
+                                
+                                    int k = 2;
+                                    rotacionar_lista(&lista, k);
+                                
+                                    printf("Lista após rotacionar %d posições:\n", k);
+                                    imprimir_lista(lista);
+                                
+                                    return 0;
+                                }
+
+
+
+//exercicio 24
+typedef struct PilhaComMin {
+    Pilha principal;
+    Pilha minimos;
+} PilhaComMin;
+
+// Inicializa a pilha com mínimo
+void inicializar_pilha_com_min(PilhaComMin* p) {
+    inicializar(&p->principal);
+    inicializar(&p->minimos);
+}
+
+// Push com controle de mínimo
+void push_com_min(PilhaComMin* p, int valor) {
+    push(&p->principal, valor);
+    if (esta_vazia(&p->minimos) || valor <= top(&p->minimos)) {
+        push(&p->minimos, valor);
+    }
+}
+
+// Pop com controle de mínimo
+int pop_com_min(PilhaComMin* p) {
+    int removido = pop(&p->principal);
+    if (removido == top(&p->minimos)) {
+        pop(&p->minimos);
+    }
+    return removido;
+}
+                    //main exercicio 24
+                            int main() {
+                                PilhaComMin pilha;
+                                inicializar_pilha_com_min(&pilha);
+                            
+                                push_com_min(&pilha, 3);
+                                push_com_min(&pilha, 5);
+                                printf("Min: %d\n", obter_minimo(&pilha)); // 3
+                                push_com_min(&pilha, 2);
+                                push_com_min(&pilha, 1);
+                                printf("Min: %d\n", obter_minimo(&pilha)); // 1
+                                pop_com_min(&pilha);
+                                printf("Min: %d\n", obter_minimo(&pilha)); // 2
+                                pop_com_min(&pilha);
+                                printf("Topo: %d\n", top_com_min(&pilha)); // 5
+                                printf("Min: %d\n", obter_minimo(&pilha)); // 3
+                            
+                                return 0;
+                            }
