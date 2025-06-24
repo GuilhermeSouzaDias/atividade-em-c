@@ -1146,3 +1146,148 @@ int pop_com_min(PilhaComMin* p) {
                             
                                 return 0;
                             }
+
+
+//exercicio 25
+
+typedef struct {
+    int arr[MAX];
+    int topo1;
+    int topo2;
+} DuasPilhas;
+
+void inicializar(DuasPilhas* pilhas) {
+    pilhas->topo1 = -1;
+    pilhas->topo2 = MAX;
+}
+
+void empilhar1(DuasPilhas* pilhas, int valor) {
+    if (pilhas->topo1 + 1 < pilhas->topo2) {
+        pilhas->topo1++;
+        pilhas->arr[pilhas->topo1] = valor;
+    } else {
+        printf("Estouro de pilha 1\n");
+    }
+}
+
+// Empilha na pilha 2 (direita → esquerda)
+void empilhar2(DuasPilhas* pilhas, int valor) {
+    if (pilhas->topo2 - 1 > pilhas->topo1) {
+        pilhas->topo2--;
+        pilhas->arr[pilhas->topo2] = valor;
+    } else {
+        printf("Estouro de pilha 2\n");
+    }
+}
+
+int desempilhar1(DuasPilhas* pilhas) {
+    if (pilhas->topo1 >= 0) {
+        int valor = pilhas->arr[pilhas->topo1];
+        pilhas->topo1--;
+        return valor;
+    } else {
+        printf("Pilha 1 vazia\n");
+        return -1;
+    }
+}
+int desempilhar2(DuasPilhas* pilhas) {
+    if (pilhas->topo2 < MAX) {
+        int valor = pilhas->arr[pilhas->topo2];
+        pilhas->topo2++;
+        return valor;
+    } else {
+        printf("Pilha 2 vazia\n");
+        return -1;
+    }
+}
+
+
+                //main exercicio 25
+                    int main() {
+                        DuasPilhas pilhas;
+                        inicializar(&pilhas);
+                    
+                        empilhar1(&pilhas, 10);
+                        empilhar1(&pilhas, 20);
+                        empilhar2(&pilhas, 100);
+                        empilhar2(&pilhas, 200);
+                    
+                        printf("Desempilhando da pilha 1: %d\n", desempilhar1(&pilhas)); // 20
+                        printf("Desempilhando da pilha 2: %d\n", desempilhar2(&pilhas)); // 200
+                    
+                        return 0;
+                    }
+
+
+//exercicio 26
+int eh_operador(char c) {
+    return (c == '+' || c == '-' || c == '*' || c == '/');
+}
+
+// Função para aplicar o operador a dois operandos
+int aplicar_operador(int op1, int op2, char operador) {
+    switch (operador) {
+        case '+': return op1 + op2;
+        case '-': return op1 - op2;
+        case '*': return op1 * op2;
+        case '/': return op1 / op2;
+        default:
+            printf("Operador inválido: %c\n", operador);
+            exit(1);
+    }
+}
+
+// Função para avaliar a expressão pós-fixa
+int avaliar_posfixa(const char* expressao) {
+    int pilha[MAX];
+    int topo = -1;
+
+    char token[20];
+    int i = 0, j = 0;
+
+    while (expressao[i]) {
+        if (isspace(expressao[i])) {
+            i++;
+            continue;
+        }
+
+        if (isdigit(expressao[i]) || (expressao[i] == '-' && isdigit(expressao[i+1]))) {
+            // Ler número (suporta negativos)
+            j = 0;
+            while (expressao[i] && (isdigit(expressao[i]) || expressao[i] == '-')) {
+                token[j++] = expressao[i++];
+            }
+            token[j] = '\0';
+            pilha[++topo] = atoi(token);
+        } else if (eh_operador(expressao[i])) {
+            if (topo < 1) {
+                printf("Erro: expressão inválida\n");
+                exit(1);
+            }
+            int op2 = pilha[topo--];
+            int op1 = pilha[topo--];
+            int resultado = aplicar_operador(op1, op2, expressao[i]);
+            pilha[++topo] = resultado;
+            i++;
+        } else {
+            printf("Caractere inválido: %c\n", expressao[i]);
+            exit(1);
+        }
+    }
+
+    if (topo != 0) {
+        printf("Erro: expressão malformada\n");
+        exit(1);
+    }
+
+    return pilha[topo];
+}
+
+                    //main exericio 26
+                        int main() {
+                            const char* expressao = "3 4 + 2 *";  // Resultado esperado: 14
+                            int resultado = avaliar_posfixa(expressao);
+                            printf("Resultado: %d\n", resultado);
+                            return 0;
+                        }
+
