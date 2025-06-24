@@ -1291,3 +1291,152 @@ int avaliar_posfixa(const char* expressao) {
                             return 0;
                         }
 
+
+//exercicio 27 
+typedef struct {
+    int dados[MAX];
+    int topo;
+} Pilha;
+
+void inicializar(Pilha* p) {
+    p->topo = -1;
+}
+
+int vazia(Pilha* p) {
+    return p->topo == -1;
+}
+
+int cheia(Pilha* p) {
+    return p->topo == MAX - 1;
+}
+
+void empilhar(Pilha* p, int valor) {
+    if (cheia(p)) {
+        printf("Estouro de pilha\n");
+        exit(1);
+    }
+    p->dados[++p->topo] = valor;
+}
+
+int desempilhar(Pilha* p) {
+    if (vazia(p)) {
+        printf("Pilha vazia\n");
+        exit(1);
+    }
+    return p->dados[p->topo--];
+}
+
+
+typedef struct {
+    Pilha entrada;
+    Pilha saida;
+} FilaComDuasPilhas;
+
+void inicializarFila(FilaComDuasPilhas* fila) {
+    inicializar(&fila->entrada);
+    inicializar(&fila->saida);
+}
+
+void enfileirar(FilaComDuasPilhas* fila, int valor) {
+    empilhar(&fila->entrada, valor);
+}
+
+int desenfileirar(FilaComDuasPilhas* fila) {
+    if (vazia(&fila->saida)) {
+        while (!vazia(&fila->entrada)) {
+            int temp = desempilhar(&fila->entrada);
+            empilhar(&fila->saida, temp);
+        }
+    }
+
+    if (vazia(&fila->saida)) {
+        printf("Fila vazia\n");
+        exit(1);
+    }
+
+    return desempilhar(&fila->saida);
+}
+
+                //main exercicio 27 
+                int main() {
+                    FilaComDuasPilhas fila;
+                    inicializarFila(&fila);
+                
+                    enfileirar(&fila, 10);
+                    enfileirar(&fila, 20);
+                    enfileirar(&fila, 30);
+                
+                    printf("Desenfileirado: %d\n", desenfileirar(&fila));  // 10
+                    printf("Desenfileirado: %d\n", desenfileirar(&fila));  // 20
+                
+                    enfileirar(&fila, 40);
+                    printf("Desenfileirado: %d\n", desenfileirar(&fila));  // 30
+                    printf("Desenfileirado: %d\n", desenfileirar(&fila));  // 40
+                
+                    return 0;
+                }
+
+//execicio 28
+typedef struct No {
+    int dado;
+    struct No* prox;
+} No;
+
+// Função para criar um novo nó
+No* novoNo(int valor) {
+    No* no = (No*)malloc(sizeof(No));
+    no->dado = valor;
+    no->prox = NULL;
+    return no;
+}
+
+// Função para inverter nós em grupos de tamanho K
+No* inverter_grupos(No* cabeca, int k) {
+    No* atual = cabeca;
+    No* anterior = NULL;
+    No* proximo = NULL;
+    int contador = 0;
+
+    // Primeiro, verifique se há pelo menos k nós restantes
+    No* verificador = cabeca;
+    for (int i = 0; i < k; i++) {
+        if (verificador == NULL) return cabeca;
+        verificador = verificador->prox;
+    }
+
+    // Inverta os k primeiros nós
+    while (atual != NULL && contador < k) {
+        proximo = atual->prox;
+        atual->prox = anterior;
+        anterior = atual;
+        atual = proximo;
+        contador++;
+    }
+
+    // Recursão para o restante da lista
+    if (proximo != NULL)
+        cabeca->prox = inverter_grupos(proximo, k);
+
+    return anterior;  // novo início do grupo invertido
+}
+
+                    //main exercicio 28
+                    int main() {
+                        No* lista = NULL;
+                        inserir_fim(&lista, 1);
+                        inserir_fim(&lista, 2);
+                        inserir_fim(&lista, 3);
+                        inserir_fim(&lista, 4);
+                        inserir_fim(&lista, 5);
+                    
+                        printf("Lista original: ");
+                        imprimir_lista(lista);
+                    
+                        int k = 2;
+                        lista = inverter_grupos(lista, k);
+                    
+                        printf("Lista invertida em grupos de %d: ", k);
+                        imprimir_lista(lista);
+                    
+                        return 0;
+                    }
