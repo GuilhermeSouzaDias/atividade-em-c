@@ -1382,7 +1382,6 @@ typedef struct No {
     struct No* prox;
 } No;
 
-// Função para criar um novo nó
 No* novoNo(int valor) {
     No* no = (No*)malloc(sizeof(No));
     no->dado = valor;
@@ -1390,21 +1389,20 @@ No* novoNo(int valor) {
     return no;
 }
 
-// Função para inverter nós em grupos de tamanho K
+
 No* inverter_grupos(No* cabeca, int k) {
     No* atual = cabeca;
     No* anterior = NULL;
     No* proximo = NULL;
     int contador = 0;
 
-    // Primeiro, verifique se há pelo menos k nós restantes
+
     No* verificador = cabeca;
     for (int i = 0; i < k; i++) {
         if (verificador == NULL) return cabeca;
         verificador = verificador->prox;
     }
 
-    // Inverta os k primeiros nós
     while (atual != NULL && contador < k) {
         proximo = atual->prox;
         atual->prox = anterior;
@@ -1417,7 +1415,7 @@ No* inverter_grupos(No* cabeca, int k) {
     if (proximo != NULL)
         cabeca->prox = inverter_grupos(proximo, k);
 
-    return anterior;  // novo início do grupo invertido
+    return anterior;
 }
 
                     //main exercicio 28
@@ -1440,3 +1438,96 @@ No* inverter_grupos(No* cabeca, int k) {
                     
                         return 0;
                     }
+
+
+//exericio 29
+int eh_palindromo(No* cabeca) {
+    if (!cabeca || !cabeca->prox)
+        return 1;
+
+    No* lento = cabeca;
+    No* rapido = cabeca;
+    while (rapido->prox && rapido->prox->prox) {
+        lento = lento->prox;
+        rapido = rapido->prox->prox;
+    }
+
+    No* segunda_metade = inverter_lista(lento->prox);
+
+    No* p1 = cabeca;
+    No* p2 = segunda_metade;
+    int eh_palindromo = 1;
+    while (p2) {
+        if (p1->dado != p2->dado) {
+            eh_palindromo = 0;
+            break;
+        }
+        p1 = p1->prox;
+        p2 = p2->prox;
+    }
+
+    lento->prox = inverter_lista(segunda_metade);
+
+    return eh_palindromo;
+}
+                //main exercicio 29
+                int main() {
+                    No* lista = NULL;
+                    inserir_fim(&lista, 1);
+                    inserir_fim(&lista, 2);
+                    inserir_fim(&lista, 3);
+                    inserir_fim(&lista, 2);
+                    inserir_fim(&lista, 1);
+                
+                    printf("Lista: ");
+                    imprimir_lista(lista);
+                
+                    if (eh_palindromo(lista))
+                        printf("É palíndromo\n");
+                    else
+                        printf("Não é palíndromo\n");
+                
+                    printf("Lista restaurada: ");
+                    imprimir_lista(lista);
+                
+                    return 0;
+                }
+
+
+//exercicio 30
+int trappingRainWater(int altura[], int n) {
+    int pilha[MAX];
+    int topo = -1;
+    int agua_total = 0;
+    int atual = 0;
+
+    while (atual < n) {
+        while (topo != -1 && altura[atual] > altura[pilha[topo]]) {
+            int fundo = pilha[topo--]; 
+
+            if (topo == -1) break; 
+
+            int distancia = atual - pilha[topo] - 1;
+            int altura_limite = (altura[atual] < altura[pilha[topo]]) ? altura[atual] : altura[pilha[topo]];
+            int agua = (altura_limite - altura[fundo]) * distancia;
+
+            if (agua > 0)
+                agua_total += agua;
+        }
+
+        pilha[++topo] = atual++;
+    }
+
+    return agua_total;
+}
+
+                    //main exercicio 30
+                        int main() {
+                            int altura[] = {0,1,0,2,1,0,1,3,2,1,2,1};
+                            int n = sizeof(altura) / sizeof(altura[0]);
+                        
+                            int resultado = trappingRainWater(altura, n);
+                            printf("Água total retida: %d\n", resultado);  // Esperado: 6
+                        
+                            return 0;
+                        }
